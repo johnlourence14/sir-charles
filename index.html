@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>📚 Library Management System</h1>
+            <p>Efficiently manage books, users, and borrowing records</p>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-btn" data-tab="catalog">Book Catalog</button>
+                <button class="nav-btn" data-tab="users">Users</button>
+                <button class="nav-btn" data-tab="borrowing">Borrowing</button>
+                <button class="nav-btn" data-tab="records">Records</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Alert Messages -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- DASHBOARD TAB -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="addBookBtn">+ Add Book</button>
+                    <button class="btn btn-primary" id="addUserBtn">+ Register User</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Books</h3>
+                    <p class="stat-value" id="totalBooks">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Available Books</h3>
+                    <p class="stat-value" id="availableBooks">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Borrowed Books</h3>
+                    <p class="stat-value" id="borrowedBooksCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p class="stat-value" id="totalUsers">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Borrowers</h3>
+                    <p class="stat-value" id="activeBorrowers">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Fines</h3>
+                    <p class="stat-value" id="totalFines">₱0.00</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Overdue Books</h3>
+                    <p class="stat-value" id="overdueCount">0</p>
+                </div>
+            </div>
+
+            <div class="activity-section">
+                <h2>Recent Activity</h2>
+                <div id="activityLog" class="activity-list"></div>
+            </div>
+        </section>
+
+        <!-- CATALOG TAB -->
+        <section id="catalog" class="tab-content">
+            <div class="section-header">
+                <h2>Book Catalog</h2>
+                <div class="search-filters">
+                    <input type="text" id="searchBooks" placeholder="Search by title, author, ISBN...">
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Biography">Biography</option>
+                    </select>
+                    <button class="btn btn-secondary" id="filterBtn">Filter</button>
+                </div>
+            </div>
+            <div id="catalogGrid" class="books-grid"></div>
+        </section>
+
+        <!-- USERS TAB -->
+        <section id="users" class="tab-content">
+            <div class="section-header">
+                <h2>Manage Users</h2>
+                <div class="search-filters">
+                    <input type="text" id="searchUsers" placeholder="Search users...">
+                    <button class="btn btn-secondary" id="searchUserBtn">Search</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>User ID</th>
+                            <th>Type</th>
+                            <th>Email</th>
+                            <th>Books Borrowed</th>
+                            <th>Total Fines</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersList"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- BORROWING TAB -->
+        <section id="borrowing" class="tab-content">
+            <div class="section-header">
+                <h2>Borrowing Management</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="borrowBookBtn">Borrow Book</button>
+                    <button class="btn btn-warning" id="returnBookBtn">Return Book</button>
+                </div>
+            </div>
+
+            <h3>Currently Borrowed Books</h3>
+            <div class="table-wrapper">
+                <table class="borrowed-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>User Name</th>
+                            <th>Borrowed Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Days Left</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="borrowedList"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- RECORDS TAB -->
+        <section id="records" class="tab-content">
+            <div class="section-header">
+                <h2>Borrowing Records</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>User Name</th>
+                            <th>Borrowed</th>
+                            <th>Returned</th>
+                            <th>Days</th>
+                            <th>Fine</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsList"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODALS -->
+
+    <!-- Add Book Modal -->
+    <div id="addBookModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Book</h2>
+                <button class="modal-close" data-modal="addBookModal">&times;</button>
+            </div>
+            <form id="addBookForm" class="form">
+                <div class="form-group">
+                    <label for="bookTitle">Book Title *</label>
+                    <input type="text" id="bookTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookAuthor">Author *</label>
+                    <input type="text" id="bookAuthor" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookISBN">ISBN *</label>
+                    <input type="text" id="bookISBN" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookCategory">Category *</label>
+                    <select id="bookCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Biography">Biography</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bookType">Book Type *</label>
+                    <select id="bookType" required>
+                        <option value="">Select Type</option>
+                        <option value="PrintedBook">Printed Book</option>
+                        <option value="EBook">E-Book</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bookQuantity">Quantity *</label>
+                    <input type="number" id="bookQuantity" value="1" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="loanDuration">Loan Duration (days) *</label>
+                    <input type="number" id="loanDuration" value="14" min="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Add Book</button>
+                    <button type="button" class="btn btn-danger" data-modal="addBookModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Register New User</h2>
+                <button class="modal-close" data-modal="addUserModal">&times;</button>
+            </div>
+            <form id="addUserForm" class="form">
+                <div class="form-group">
+                    <label for="userName">Full Name *</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email *</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userID">User ID *</label>
+                    <input type="text" id="userID" required>
+                </div>
+                <div class="form-group">
+                    <label for="userType">User Type *</label>
+                    <select id="userType" required>
+                        <option value="">Select Type</option>
+                        <option value="Student">Student</option>
+                        <option value="Faculty">Faculty</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="maxBooks">Max Books to Borrow *</label>
+                    <input type="number" id="maxBooks" value="5" min="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Register User</button>
+                    <button type="button" class="btn btn-danger" data-modal="addUserModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Borrow Book Modal -->
+    <div id="borrowModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Borrow Book</h2>
+                <button class="modal-close" data-modal="borrowModal">&times;</button>
+            </div>
+            <form id="borrowForm" class="form">
+                <div class="form-group">
+                    <label for="borrowUser">Select User *</label>
+                    <select id="borrowUser" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="borrowBook">Select Book *</label>
+                    <select id="borrowBook" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="borrowDate">Borrow Date *</label>
+                    <input type="date" id="borrowDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expectedReturnDate">Expected Return Date *</label>
+                    <input type="date" id="expectedReturnDate" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Borrow Book</button>
+                    <button type="button" class="btn btn-danger" data-modal="borrowModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Return Book Modal -->
+    <div id="returnModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Return Book</h2>
+                <button class="modal-close" data-modal="returnModal">&times;</button>
+            </div>
+            <form id="returnForm" class="form">
+                <div class="form-group">
+                    <label for="returnBook">Select Borrowed Book *</label>
+                    <select id="returnBook" required></select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Return Book</button>
+                    <button type="button" class="btn btn-danger" data-modal="returnModal">Cancel</button>
+                </div>
+            </form>
+        </div>  
+    </div>
+
+    <footer class="footer">
+        <p>&copy;Library Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="Classess.js"></script>
+    <script src="aps.js"></script>
+</body>
+</html>             
